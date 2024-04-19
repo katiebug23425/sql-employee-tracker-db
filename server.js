@@ -65,6 +65,12 @@ const newConnection = mysql.createConnection(
 
     });
   }
+function allDepts() {
+    const query = "SELECT * FROM departments";
+
+}
+
+
 
 
   
