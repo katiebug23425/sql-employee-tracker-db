@@ -137,4 +137,7 @@ async function allRoles() {
 
 
 
-  
+// close the connection when the application exits
+process.on("exit", () => {
+    newConnection.end();
+});
