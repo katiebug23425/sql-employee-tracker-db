@@ -1,6 +1,7 @@
 require('dotenv').config();
 const mysql = require('mysql2');
 const prompt = require('inquirer');
+require('console.table');
 
 
 // Connect to database
@@ -66,7 +67,7 @@ const newConnection = mysql.createConnection(
 
     });
   }
-  
+
   async function allDepts() {
     try {
         const query = "SELECT * FROM departments";
