@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mysql = require('mysql2');
 const prompt = require('inquirer');
 
@@ -6,8 +7,8 @@ const prompt = require('inquirer');
 const newConnection = mysql.createConnection(
   {
     host: 'localhost',
-    user: 'root',
-    password: '',
+    user: process.env.username,
+    password: process.env.password,
     database: 'employeeManager_db',
   });
   
