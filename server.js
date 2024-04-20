@@ -1,3 +1,4 @@
+// Imports
 require('dotenv').config();
 const mysql = require('mysql2');
 const prompt = require('inquirer');
@@ -19,6 +20,7 @@ const newConnection = mysql.createConnection(
     startApp();
   });
 
+  // Function to Start Employee Tracker Application
   function startApp() {
     prompt({
         type: "list",
@@ -68,6 +70,8 @@ const newConnection = mysql.createConnection(
     });
   }
 
+
+// function to view all departments
   async function allDepts() {
     try {
         const query = "SELECT * FROM departments";
@@ -84,7 +88,32 @@ const newConnection = mysql.createConnection(
     } catch (error) {
         console.error(error);
     }
+    startApp();
 }
+
+// function to add a department
+async function addDept() {
+    try {
+        const response = await prompt({
+            type: "input",
+            name: "name",
+            message: "Please enter the name of the department you would like to create:"
+        });
+
+        console.log(response.name);
+
+        const query = `INSERT INTO departments (department_name) VALUES ("${response.name}")`;
+
+        const res = await newConnection.query(query);
+
+        console.log(`You have successfully added department ${response.name} to the database!`);
+        startApp();
+    } catch (err) {
+        console.error("Error adding department:", err);
+        startApp();
+    }
+}
+
 
 
 
