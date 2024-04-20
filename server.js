@@ -114,6 +114,25 @@ async function addDept() {
     }
 }
 
+// function to view all roles
+async function allRoles() {
+    try {
+        const query = "SELECT roles.title, roles.id, departments.department_name, roles.salary FROM roles JOIN departments ON roles.department_id = departments.id";
+        const rows = await new Promise((resolve, reject) => {
+            newConnection.query(query, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            });
+        });
+        console.table(rows);
+    } catch (error) {
+        console.error(error);
+    }
+    startApp();
+}
 
 
 
