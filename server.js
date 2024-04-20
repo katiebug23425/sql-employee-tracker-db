@@ -66,9 +66,23 @@ const newConnection = mysql.createConnection(
 
     });
   }
-function allDepts() {
-    const query = "SELECT * FROM departments";
-
+  
+  async function allDepts() {
+    try {
+        const query = "SELECT * FROM departments";
+        const rows = await new Promise((resolve, reject) => {
+            newConnection.query(query, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            });
+        });
+        console.table(rows);
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 
