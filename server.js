@@ -177,6 +177,32 @@ async function addRole() {
     }
 }
 
+// function to view all employees
+async function allEmployees() {
+    try {
+        const query = `
+        SELECT e.id, e.first_name, e.last_name, r.title, d.department_name, r.salary, CONCAT(m.first_name, " ", m.last_name) AS manager_name
+        FROM employee e
+        LEFT JOIN role r ON e.role_id = r.id
+        LEFT JOIN department d ON r.department_id = d.id
+        LEFT JOIN employee m ON e.manager_id = m.id;
+        `;
+        const rows = await new Promise((resolve, reject) => {
+            newConnection.query(query, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            });
+        });
+        console.table(rows);
+    } catch (error) {
+        console.error(error);
+    }
+    startApp();
+}
+
 
 
 // close the connection when the application exits
