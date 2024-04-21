@@ -203,6 +203,64 @@ async function allEmployees() {
     startApp();
 }
 
+// function to add a role
+async function addEmployee() {
+    try {
+        const query = "SELECT id, title FROM roles";
+        const res = await newConnection.query(query);
+        const roles = res.map(({id, title}) => ({
+            name: title,
+            value: id
+        }));
+        
+
+        const response = await prompt([
+            {
+                type: "input",
+                name: "firstName",
+                message: "Please enter the first name of the employee you would like to create:",
+            },
+
+            {
+                type: "input",
+                name: "lastName",
+                message: "Please enter the last name of the employee you would like to create:",
+            },
+
+            {
+                type: "list",
+                name: "roleId",
+                message: "Please select the role for the employee you are creating:",
+                choices: roles,
+            },
+
+            {
+                type: "list",
+                name: "managerId",
+                message: "Please select the manager for the employee you are creating:",
+                choices: [
+                    {name: "None", value: null},
+                    ...managers,
+                ],
+            },
+         ])
+        
+        const insertSqlQuery = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
+        await newConnection.query(insertSqlQuery, {
+            first_name: response.firstName,
+            last_name: response.lastName,
+            role_id: response.roleId,
+            manager_id: response.managerId,
+        });
+
+        console.log(`You have successfully added the employee to the database!`);
+        startApp();
+    } catch (err) {
+        console.error("Error adding employee:", err);
+        startApp();
+    }
+}
+
 
 
 // close the connection when the application exits
