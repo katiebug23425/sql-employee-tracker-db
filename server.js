@@ -3,6 +3,7 @@ require('dotenv').config();
 const mysql = require('mysql2');
 const prompt = require('inquirer');
 require('console.table');
+const chalk=require("chalk"); 
 
 
 // Connect to database
@@ -16,7 +17,7 @@ const newConnection = mysql.createConnection(
   
   newConnection.connect((err) => {
     if (err) throw err;
-    console.log(`Connected to the Employee Manager database.`)
+    console.log(chalk.magenta(`Connected to the Employee Manager database.`))
     startApp();
   });
 
@@ -62,7 +63,7 @@ const newConnection = mysql.createConnection(
                 break;
             case "Exit":
               newConnection.end();
-              console.log("Exited sucessfully! Goodbye!");
+              console.log(chalk.magenta("Exited sucessfully! Goodbye!"));
                 break;  
 
         }
@@ -100,16 +101,16 @@ async function addDept() {
             message: "Please enter the name of the department you would like to create:"
         });
 
-        console.log(response.name);
+        console.log(chalk.yellow(response.name));
 
         const query = `INSERT INTO departments (department_name) VALUES ("${response.name}")`;
 
         const res = await newConnection.query(query);
 
-        console.log(`You have successfully added department ${response.name} to the database!`);
+        console.log(chalk.green(`You have successfully added department ${response.name} to the database!`));
         startApp();
     } catch (err) {
-        console.error("Error adding department:", err);
+        console.error(chalk.red("Error adding department:", err));
         startApp();
     }
 }
@@ -169,10 +170,10 @@ async function addRole() {
             department_id: department.id,
         });
 
-        console.log(`You have successfully added role ${response.title} to the ${response.department} department with salary ${response.salary} to the database!`);
+        console.log(chalk.green(`You have successfully added role ${response.title} to the ${response.department} department with salary ${response.salary} to the database!`));
         startApp();
     } catch (err) {
-        console.error("Error adding role:", err);
+        console.error(chalk.red("Error adding role:", err));
         startApp();
     }
 }
@@ -251,10 +252,10 @@ async function addEmployee() {
         const insertSqlQuery = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
         await newConnection.query(insertSqlQuery, [response.firstName, response.lastName, response.roleId, response.managerId]);
 
-        console.log(`You have successfully added the employee to the database!`);
+        console.log(chalk.green(`You have successfully added the employee to the database!`));
         startApp();
     } catch (err) {
-        console.error("Error adding employee:", err);
+        console.error(chalk.red("Error adding employee:", err));
         startApp();
     }
 }
