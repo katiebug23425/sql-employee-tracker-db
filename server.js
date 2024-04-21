@@ -203,16 +203,22 @@ async function allEmployees() {
     startApp();
 }
 
-// function to add a role
+// function to add an employee
 async function addEmployee() {
     try {
-        const query = "SELECT id, title FROM roles";
-        const res = await newConnection.query(query);
-        const roles = res.map(({id, title}) => ({
+        const rolesQuery = "SELECT id, title FROM roles";
+        const rolesRes = await newConnection.query(rolesQuery);
+        const roles = rolesRes.map(({ id, title }) => ({
             name: title,
             value: id
         }));
-        
+
+        const managersQuery = "SELECT id, first_name, last_name FROM employee WHERE manager_id IS NULL";
+        const managersRes = await newConnection.query(managersQuery);
+        const managers = managersRes.map(({ id, first_name, last_name }) => ({
+            name: `${first_name} ${last_name}`,
+            value: id
+        }));
 
         const response = await prompt([
             {
@@ -220,38 +226,30 @@ async function addEmployee() {
                 name: "firstName",
                 message: "Please enter the first name of the employee you would like to create:",
             },
-
             {
                 type: "input",
                 name: "lastName",
                 message: "Please enter the last name of the employee you would like to create:",
             },
-
             {
                 type: "list",
                 name: "roleId",
                 message: "Please select the role for the employee you are creating:",
                 choices: roles,
             },
-
             {
                 type: "list",
                 name: "managerId",
                 message: "Please select the manager for the employee you are creating:",
                 choices: [
-                    {name: "None", value: null},
+                    { name: "None", value: null },
                     ...managers,
                 ],
             },
-         ])
-        
+        ]);
+
         const insertSqlQuery = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)";
-        await newConnection.query(insertSqlQuery, {
-            first_name: response.firstName,
-            last_name: response.lastName,
-            role_id: response.roleId,
-            manager_id: response.managerId,
-        });
+        await newConnection.query(insertSqlQuery, [response.firstName, response.lastName, response.roleId, response.managerId]);
 
         console.log(`You have successfully added the employee to the database!`);
         startApp();
