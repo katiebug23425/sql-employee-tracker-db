@@ -22,8 +22,8 @@ const newConnection = mysql.createConnection(
   });
 
   // Function to Start Employee Tracker Application
-  function startApp() {
-    prompt({
+  async function startApp() {
+    const response = await prompt({
         type: "list",
         name: "options",
         message: "What would you like to do? Choose below",
@@ -37,39 +37,36 @@ const newConnection = mysql.createConnection(
             "Update Employee Role",
             "Exit"
         ],
-    })
-    .then((response) => {
-        switch (response.options) {
-            case "View All Departments":
-                allDepts();
-                break;
-            case "Add Department":
-                addDept();
-                break;
-            case "View All Roles":
-                allRoles();
-                break;
-            case "Add Role":
-                addRole();
-                break;
-            case "View All Employees":
-                allEmployees();
-                break;
-            case "Add Employee":
-                addEmployee();
-                break;
-            case "Update Employee Role":
-                updateRole();
-                break;
-            case "Exit":
-              newConnection.end();
-              console.log(chalk.magenta("Exited sucessfully! Goodbye!"));
-                break;  
-
-        }
-
     });
-  }
+
+    switch (response.options) {
+        case "View All Departments":
+            allDepts();
+            break;
+        case "Add Department":
+            addDept();
+            break;
+        case "View All Roles":
+            allRoles();
+            break;
+        case "Add Role":
+            addRole();
+            break;
+        case "View All Employees":
+            allEmployees();
+            break;
+        case "Add Employee":
+            addEmployee();
+            break;
+        case "Update Employee Role":
+            updateRole();
+            break;
+        case "Exit":
+            newConnection.end();
+            console.log(chalk.magenta("Exited successfully! Goodbye!"));
+            break;
+    }
+}
 
 
 // function to view all departments
