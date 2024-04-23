@@ -1,7 +1,9 @@
 // Imports
 require('dotenv').config();
 const mysql = require('mysql2');
+const util = require('util');
 const prompt = require('inquirer');
+const { promisify } = require('util');
 require('console.table');
 const chalk=require("chalk"); 
 
@@ -257,7 +259,42 @@ async function addEmployee() {
     }
 }
 
+const queryEmployees = promisify(connection.query).bind(connection);
+const queryRoles = promisify(connection.query).bind(connection);
+const updateEmployeeRole = promisify(connection.query).bind(connection);
 
+async function updateRole() {
+    try {
+        const resEmployees = await queryEmployees("SELECT employee.id, employee.first_name, employee.last_name, roles.title FROM employee LEFT JOIN roles ON employee.role_id = roles.id");
+        const resRoles = await queryRoles("SELECT * FROM roles");
+
+        const answers = await inquirer.prompt([
+            {
+                type: "list",
+                name: "employee",
+                message: "Please select the employee you would like to update:",
+                choices: resEmployees.map(employee => `${employee.first_name} ${employee.last_name}`)
+            },
+            {
+                type: "list",
+                name: "role",
+                message: "Please select the new role for the update:",
+                choices: resRoles.map(role => role.title)
+            }
+        ]);
+
+        const employee = resEmployees.find(employee => `${employee.first_name} ${employee.last_name}` === answers.employee);
+        const role = resRoles.find(role => role.title === answers.role);
+
+        await updateEmployeeRole("UPDATE employee SET role_id = ? WHERE id = ?", [role.id, employee.id]);
+
+        console.log(chalk.green(`You have successfully updated ${employee.first_name} ${employee.last_name}'s role to ${role.title} in the database!`));
+        startApp();
+    } catch (err) {
+        console.error(chalk.red("Error updating role:", err));
+        startApp();
+    }
+}
 
 // close the connection when the application exits
 process.on("exit", () => {
