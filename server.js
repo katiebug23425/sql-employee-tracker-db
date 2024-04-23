@@ -259,6 +259,7 @@ async function addEmployee() {
     }
 }
 
+//function to update Role
 const queryEmployees = promisify(connection.query).bind(connection);
 const queryRoles = promisify(connection.query).bind(connection);
 const updateEmployeeRole = promisify(connection.query).bind(connection);
