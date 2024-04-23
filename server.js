@@ -1,20 +1,19 @@
 // Imports
-require('dotenv').config();
 const mysql = require('mysql2');
 const util = require('util');
-const prompt = require('inquirer');
+const { prompt } = require('inquirer');
 const { promisify } = require('util');
 require('console.table');
-const chalk = require("chalk"); 
+const chalk = require('chalk'); 
 
 
 // Connect to database
 const newConnection = mysql.createConnection(
   {
     host: 'localhost',
-    user: process.env.username,
-    password: process.env.password,
-    database: 'employeeManager_db',
+    user: 'root',
+    password: 'Curie22081%',
+    database: 'employee_manager_db',
   });
   
   newConnection.connect((err) => {
@@ -260,9 +259,9 @@ async function addEmployee() {
 }
 
 //function to update Role
-const queryEmployees = promisify(connection.query).bind(connection);
-const queryRoles = promisify(connection.query).bind(connection);
-const updateEmployeeRole = promisify(connection.query).bind(connection);
+const queryEmployees = promisify(newConnection.query).bind(newConnection);
+const queryRoles = promisify(newConnection.query).bind(newConnection);
+const updateEmployeeRole = promisify(newConnection.query).bind(newConnection);
 
 async function updateRole() {
     try {
