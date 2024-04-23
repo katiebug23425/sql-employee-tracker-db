@@ -268,7 +268,7 @@ async function updateRole() {
         const resEmployees = await queryEmployees("SELECT employee.id, employee.first_name, employee.last_name, roles.title FROM employee LEFT JOIN roles ON employee.role_id = roles.id");
         const resRoles = await queryRoles("SELECT * FROM roles");
 
-        const answers = await inquirer.prompt([
+        const answers = await prompt([
             {
                 type: "list",
                 name: "employee",
