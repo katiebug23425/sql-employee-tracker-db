@@ -5,7 +5,7 @@ const util = require('util');
 const prompt = require('inquirer');
 const { promisify } = require('util');
 require('console.table');
-const chalk=require("chalk"); 
+const chalk = require("chalk"); 
 
 
 // Connect to database
