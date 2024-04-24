@@ -150,7 +150,7 @@ async function addRole() {
             });
         });
 
-        console.log(res)
+        
         const response = await prompt([
             {
                 type: "input",
@@ -171,7 +171,6 @@ async function addRole() {
         ]);
 
         //const department = res.find((department) => department.name === response.department);
-        console.log(response)
         const insertQuery = `INSERT INTO roles (title, salary, department_id) VALUES ("${response.title}", ${response.salary}, ${response.department})`;
         await newConnection.query(insertQuery);
 
