@@ -1,26 +1,28 @@
 // Imports
-const mysql = require('mysql2');
+const mysql = require('mysql');
 const util = require('util');
 const { prompt } = require('inquirer');
 const { promisify } = require('util');
 require('console.table');
 const chalk = require('chalk'); 
 
-
-// Connect to database
-const newConnection = mysql.createConnection(
-  {
+const newConnection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'Curie22081%',
     database: 'employee_manager_db',
   });
+  const pool = mysql.createPool(newConnection)
   
-  newConnection.connect((err) => {
-    if (err) throw err;
-    console.log(chalk.magenta(`Connected to the Employee Manager database.`))
-    startApp();
-  });
+//   //(async () => {
+//     try {
+//       await newConnection;
+//       console.log(chalk.magenta(`Connected to the Employee Manager database.`));
+      startApp();
+//     } catch (err) {
+//       console.error(chalk.red('Error connecting to the database:', err));
+//     }
+//  // })();
 
   // Function to Start Employee Tracker Application
   async function startApp() {
@@ -137,9 +139,18 @@ async function allRoles() {
 // function to add a role
 async function addRole() {
     try {
-        const query = "SELECT * FROM departments";
-        const res = await newConnection.query(query);
+        const query = "SELECT id AS value, department_name AS name FROM departments";
+        const res = await new Promise((resolve, reject) => {
+            newConnection.query(query, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            });
+        });
 
+        console.log(res)
         const response = await prompt([
             {
                 type: "input",
@@ -155,18 +166,14 @@ async function addRole() {
                 type: "list",
                 name: "department",
                 message: "Please select the department for the role you are creating:",
-                choices: res.map((department) => department.department_name),
+                choices: res
             },
         ]);
 
-        const department = res.find((department) => department.name === response.department);
-        
-        const insertQuery = "INSERT INTO roles SET ?";
-        await newConnection.query(insertQuery, {
-            title: response.title,
-            salary: response.salary,
-            department_id: department.id,
-        });
+        //const department = res.find((department) => department.name === response.department);
+        console.log(response)
+        const insertQuery = `INSERT INTO roles (title, salary, department_id) VALUES ("${response.title}", ${response.salary}, ${response.department})`;
+        await newConnection.query(insertQuery);
 
         console.log(chalk.green(`You have successfully added role ${response.title} to the ${response.department} department with salary ${response.salary} to the database!`));
         startApp();
@@ -182,8 +189,8 @@ async function allEmployees() {
         const query = `
         SELECT e.id, e.first_name, e.last_name, r.title, d.department_name, r.salary, CONCAT(m.first_name, " ", m.last_name) AS manager_name
         FROM employee e
-        LEFT JOIN role r ON e.role_id = r.id
-        LEFT JOIN department d ON r.department_id = d.id
+        LEFT JOIN roles r ON e.role_id = r.id
+        LEFT JOIN departments d ON r.department_id = d.id
         LEFT JOIN employee m ON e.manager_id = m.id;
         `;
         const rows = await new Promise((resolve, reject) => {
@@ -259,10 +266,10 @@ async function addEmployee() {
 }
 
 //function to update Role
-const queryEmployees = promisify(newConnection.query).bind(newConnection);
-const queryRoles = promisify(newConnection.query).bind(newConnection);
-const updateEmployeeRole = promisify(newConnection.query).bind(newConnection);
-
+  const queryEmployees = promisify(pool.query).bind(pool);
+  const queryRoles = promisify(pool.query).bind(pool);
+  const updateEmployeeRole = promisify(pool.query).bind(pool);
+  const promisePoolEnd = promisify(pool.end).bind(pool)
 async function updateRole() {
     try {
         const resEmployees = await queryEmployees("SELECT employee.id, employee.first_name, employee.last_name, roles.title FROM employee LEFT JOIN roles ON employee.role_id = roles.id");
@@ -298,5 +305,5 @@ async function updateRole() {
 
 // close the connection when the application exits
 process.on("exit", () => {
-    newConnection.end();
+    promisePoolEnd()();
 });
