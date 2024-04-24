@@ -1,9 +1,7 @@
 // Imports
-const mysql = require('mysql');
+const mysql = require('mysql2/promise');
 const util = require('util');
 const { prompt } = require('inquirer');
-const { promisify } = require('util');
-require('console.table');
 const chalk = require('chalk'); 
 
 const newConnection = mysql.createConnection({
@@ -12,17 +10,16 @@ const newConnection = mysql.createConnection({
     password: 'Curie22081%',
     database: 'employee_manager_db',
   });
-  const pool = mysql.createPool(newConnection)
   
-//   //(async () => {
-//     try {
-//       await newConnection;
-//       console.log(chalk.magenta(`Connected to the Employee Manager database.`));
+(async () => {
+     try {
+      await newConnection;
+      console.log(chalk.magenta(`Connected to the Employee Manager database.`));
       startApp();
-//     } catch (err) {
-//       console.error(chalk.red('Error connecting to the database:', err));
-//     }
-//  // })();
+     } catch (err) {
+      console.error(chalk.red('Error connecting to the database:', err));
+    }
+ })();
 
   // Function to Start Employee Tracker Application
   async function startApp() {
@@ -265,10 +262,9 @@ async function addEmployee() {
 }
 
 //function to update Role
-  const queryEmployees = promisify(pool.query).bind(pool);
-  const queryRoles = promisify(pool.query).bind(pool);
-  const updateEmployeeRole = promisify(pool.query).bind(pool);
-  const promisePoolEnd = promisify(pool.end).bind(pool)
+  const queryEmployees = newConnection.query;
+  const queryRoles = newConnection.query;
+  const updateEmployeeRole = newConnection.query;
 async function updateRole() {
     try {
         const resEmployees = await queryEmployees("SELECT employee.id, employee.first_name, employee.last_name, roles.title FROM employee LEFT JOIN roles ON employee.role_id = roles.id");
@@ -279,7 +275,9 @@ async function updateRole() {
                 type: "list",
                 name: "employee",
                 message: "Please select the employee you would like to update:",
-                choices: resEmployees.map(employee => `${employee.first_name} ${employee.last_name}`)
+                choices: resEmployees.map(employee =>{ 
+                   return {name: `${employee.first_name} ${employee.last_name}`, value: employee.id}
+                })
             },
             {
                 type: "list",
@@ -289,10 +287,10 @@ async function updateRole() {
             }
         ]);
 
-        const employee = resEmployees.find(employee => `${employee.first_name} ${employee.last_name}` === answers.employee);
+        const employee = resEmployees.find(employee => employee.id === answers.employee);
         const role = resRoles.find(role => role.title === answers.role);
 
-        await updateEmployeeRole("UPDATE employee SET role_id = ? WHERE id = ?", [role.id, employee.id]);
+        await updateEmployeeRole("UPDATE employee SET role_id = ? WHERE id = ?", [role.id, answers.employee]);
 
         console.log(chalk.green(`You have successfully updated ${employee.first_name} ${employee.last_name}'s role to ${role.title} in the database!`));
         startApp();
@@ -304,5 +302,4 @@ async function updateRole() {
 
 // close the connection when the application exits
 process.on("exit", () => {
-    promisePoolEnd()();
 });
