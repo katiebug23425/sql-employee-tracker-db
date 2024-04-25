@@ -5,6 +5,7 @@ const { prompt } = require('inquirer');
 const chalk = require('chalk'); 
 const cfonts = require('cfonts');
 
+// connection
 let db;
 (async () => {
     try {
