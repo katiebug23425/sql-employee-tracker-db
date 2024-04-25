@@ -233,8 +233,8 @@ async function addEmployee() {
 
 async function updateRole() {
     try {
-        const resEmployees = await db.query("SELECT employee.id, employee.first_name, employee.last_name, roles.title FROM employee LEFT JOIN roles ON employee.role_id = roles.id");
-        const resRoles = await db.query("SELECT * FROM roles");
+        const [resEmployees] = await db.query("SELECT employee.id, employee.first_name, employee.last_name, roles.title FROM employee LEFT JOIN roles ON employee.role_id = roles.id");
+        const [resRoles] = await db.query("SELECT * FROM roles");
 
         const answers = await prompt([
             {
