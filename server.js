@@ -177,14 +177,14 @@ async function allEmployees() {
 async function addEmployee() {
     try {
         const rolesQuery = "SELECT id, title FROM roles";
-        const rolesRes = await db.query(rolesQuery);
+        const [rolesRes] = await db.query(rolesQuery);
         const roles = rolesRes.map(({ id, title }) => ({
             name: title,
             value: id
         }));
 
         const managersQuery = "SELECT id, first_name, last_name FROM employee WHERE manager_id IS NULL";
-        const managersRes = await db.query(managersQuery);
+        const [managersRes] = await db.query(managersQuery);
         const managers = managersRes.map(({ id, first_name, last_name }) => ({
             name: `${first_name} ${last_name}`,
             value: id
