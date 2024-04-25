@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cfonts": "^3.2.0",
     "chalk": "^4.1.2",
     "console.table": "^0.10.0",
     "dotenv": "^16.4.5",
