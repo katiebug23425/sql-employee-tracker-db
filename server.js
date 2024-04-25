@@ -5,7 +5,7 @@ const { prompt } = require('inquirer');
 const chalk = require('chalk'); 
 const cfonts = require('cfonts');
 
-// connection
+// create connection
 let db;
 (async () => {
     try {
@@ -22,6 +22,7 @@ let db;
     }
  })();
 
+ // pretty font to make title pop
  cfonts.say("Katie Rose's \n Employee Tracker", {
 	font: 'block',              // define the font face
 	align: 'center',              // define text alignment
