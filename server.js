@@ -119,15 +119,7 @@ async function allRoles() {
 async function addRole() {
     try {
         const query = "SELECT id AS value, department_name AS name FROM departments";
-        const res = await new Promise((resolve, reject) => {
-            db.query(query, (err, res) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(res);
-                }
-            });
-        });
+        const res = await db.query(query);
 
         
         const response = await prompt([
@@ -149,7 +141,7 @@ async function addRole() {
             },
         ]);
 
-        //const department = res.find((department) => department.name === response.department);
+        const department = res.find((department) => department.name === response.department);
         const insertQuery = `INSERT INTO roles (title, salary, department_id) VALUES ("${response.title}", ${response.salary}, ${response.department})`;
         await db.query(insertQuery);
 
