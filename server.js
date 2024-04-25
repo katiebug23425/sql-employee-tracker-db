@@ -106,15 +106,7 @@ async function addDept() {
 async function allRoles() {
     try {
         const query = "SELECT roles.title, roles.id, departments.department_name, roles.salary FROM roles JOIN departments ON roles.department_id = departments.id";
-        const rows = await new Promise((resolve, reject) => {
-            db.query(query, (err, res) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(res);
-                }
-            });
-        });
+        const [rows] = await db.query(query);
         console.table(rows);
     } catch (error) {
         console.error(error);
@@ -179,15 +171,7 @@ async function allEmployees() {
         LEFT JOIN departments d ON r.department_id = d.id
         LEFT JOIN employee m ON e.manager_id = m.id;
         `;
-        const rows = await new Promise((resolve, reject) => {
-            db.query(query, (err, res) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(res);
-                }
-            });
-        });
+        const [rows] = await db.query(query);
         console.table(rows);
     } catch (error) {
         console.error(error);
