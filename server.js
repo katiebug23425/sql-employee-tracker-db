@@ -119,9 +119,10 @@ async function allRoles() {
 async function addRole() {
     try {
         const query = "SELECT id AS value, department_name AS name FROM departments";
-        const res = await db.query(query);
+        const [rows] = await db.query(query);
 
-        
+        const choices = rows.map((row) => ({ name: row.name, value: row.value }));
+
         const response = await prompt([
             {
                 type: "input",
@@ -137,21 +138,22 @@ async function addRole() {
                 type: "list",
                 name: "department",
                 message: "Please select the department for the role you are creating:",
-                choices: res
+                choices: choices,
             },
         ]);
 
-        const department = res.find((department) => department.name === response.department);
+        const department = rows.find((row) => row.value === response.department);
         const insertQuery = `INSERT INTO roles (title, salary, department_id) VALUES ("${response.title}", ${response.salary}, ${response.department})`;
         await db.query(insertQuery);
 
-        console.log(chalk.green(`You have successfully added role ${response.title} to the ${response.department} department with salary ${response.salary} to the database!`));
+        console.log(chalk.green(`You have successfully added role ${response.title} to the ${department.name} department with salary ${response.salary} to the database!`));
         startApp();
     } catch (err) {
         console.error(chalk.red("Error adding role:", err));
         startApp();
     }
 }
+
 
 // function to view all employees
 async function allEmployees() {
