@@ -17,6 +17,9 @@ Invoke the node server.js command in the terminal to begin the appliction. You w
 
 ## Link to video showing finished app:
 
+https://drive.google.com/file/d/100K9w2T5G0VfF5wsQy-TmzYJGaB3Kd3x/view
+
+
 ## Credits
 Instructor Aaron Brown
 Tutor Phillip Loy
