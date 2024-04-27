@@ -11,6 +11,9 @@ SQL Employee Tracker Database creates an interface that allows for ease of use t
 Invoke the node server.js command in the terminal to begin the appliction. You will be presented with a list of options, please choose one to proceed. Once an option is chosen additional prompts may be needed to be answered and/or information entered. The console will confirm that your action was successful (green) or encountered an error (red). 
 
 ## Screenshots:
+![screenshot for Employee Tracker DB application](./emp%20tracker%20screenshot.png)
+![second screenshot for Employee Tracker DB application](./emp%20tracker%20screenshot%202.png)
+![third screenshot for Employee Tracker DB application](./emp%20tracker%20screenshot%203.png)
 
 ## Link to video showing finished app:
 
